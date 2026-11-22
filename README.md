@@ -1,22 +1,44 @@
-# Recommender Systems: Offline Evaluation Pipeline (Part 1)
+# Recommender Systems: Offline Evaluation Pipeline (Parts 1 & 2)
 
-This repository contains an automated offline evaluation pipeline for recommender systems built on the **MovieLens 1M** dataset. It establishes non-personalized baseline models and compares their performance against a tuned personalized Collaborative Filtering approach.
+Offline evaluation pipeline for the Recommender Systems course project on the **MovieLens 1M** dataset (1,000,209 explicit ratings on a 1–5 scale across 6,040 users and 3,706 movies; 4.47% matrix density / 95.53% sparsity).
 
-## Models Implemented
-* **Most Popular (Variant 1 - All-Time):** Non-personalized baseline recommending the most frequently interacted-with movies.
-* **Most Popular (Variant 2 - Positive Only):** Non-personalized baseline recommending movies with the highest volume of positive ratings ($\ge 4$ stars).
-* **Item-Item KNN:** Personalized collaborative filtering utilizing Cosine Similarity, featuring an automated hyperparameter tuning loop to select the optimal neighborhood size ($k \in \{10, 20, 50\}$) based on validation NDCG.
+## Team (Group 18)
+* **Suraj Nagdevani** (`1547889743`) — Temporal split pipeline, dataset profiling, and metric modules (`Precision@10`, `Recall@10`, `NDCG@10`, `Coverage@10`)
+* **Raj Pawar** (`154816580`) — Matrix transformations, similarity/neighborhood logic, and GitHub repository deployment
+* **Himanshu Mahajan** (`154812678`) — Baselines, evaluation logger (`results.csv`), and report/method documentation
 
-## Evaluation Methodology
-The pipeline applies a strict chronological temporal split (80% Train, 10% Validation, 10% Test) to prevent data leakage. Models generate Top-10 recommendations for each user in the test set, evaluated on:
-* **Precision@10**
-* **Recall@10**
-* **NDCG@10**
-* **Catalog Coverage**
+**Declared Part 3 Track:** Track A — Diversity and Popularity Bias
 
-## Setup & Execution
-1. Download the [MovieLens 1M dataset](https://grouplens.org/datasets/movielens/1m/).
-2. Extract the data and place the `ml-1m` folder directly in the project directory (ensure `ratings.dat`, `movies.dat`, and `users.dat` are accessible).
-3. Install the required dependencies:
-   ```bash
-   pip install -r requirements.txt
+## Evaluation Protocol
+* **Split:** Global temporal `80% / 10% / 10%` train / validation / test split (no random split to prevent temporal leakage)
+* **Relevance Threshold:** Explicit ratings `r >= 4` treated as positive ground truth
+* **Ranking & Filtering:** Full-catalog ranking over unseen items without user/item filtering thresholds
+
+## What Was Implemented
+
+### Part 1 — Data, Protocol & Baselines
+* Dataset characterization and long-tail distribution analysis on MovieLens 1M
+* Popularity baselines (`Most Popular` — all-time frequency and positive-only)
+* Neighborhood/baseline evaluation and standardized result logging (`RecSys_Part_1.py`)
+
+### Part 2 — Models, Disaggregated Slices & Sparsity Ablation
+* **Models (`RecSys_Part-2.py`):**
+  * **BPR-MF (Self-Implemented):** Bayesian Personalized Ranking matrix factorization (`d=64`, `lr=0.015`, `reg=0.01`)
+  * **User-KNN:** User-based collaborative filtering (`k=50`, cosine similarity)
+  * **Content-Based Profile:** Item content profile using movie genres and release year (cosine similarity)
+* **Disaggregated Analysis:** User-activity and item-popularity/long-tail slice evaluation (highlighting cold-start / long-tail sparsity effects)
+* **Sparsity Ablation:** Training interaction subsampling across `100%`, `50%`, and `20%` regimes comparing `BPR-MF` and `User-KNN`
+
+## Repository Contents
+* `RecSys_Part_1.py` — Part 1 data split, baselines, and evaluation script
+* `RecSys_Part-2.py` — Part 2 models (`BPR-MF`, `User-KNN`, `Content-Based Profile`), slice evaluation, and sparsity ablation
+* `results.csv` — 10-column evaluation results log (`group_id, part, model_name, variant_notes, k, similarity, precision_at_10, recall_at_10, ndcg_at_10, coverage`)
+* `Recommender Systems - Part 2 Cumulative Report.pdf` — Cumulative report for Parts 1 & 2 with Part 3 Track A declared
+* `requirements.txt` — Python dependencies
+
+## Running the Pipeline
+Execute from the repository root passing the MovieLens 1M directory path (no hardcoded local paths):
+
+```bash
+python RecSys_Part-2.py --data-dir /path/to/ml-1m
+```
