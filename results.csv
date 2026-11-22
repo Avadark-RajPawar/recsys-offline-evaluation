@@ -1,4 +1,14 @@
-Model,Precision@10,Recall@10,NDCG@10,Coverage@10
-Most Popular (Variant 1: All-Time),0.09250841750841751,0.022928740638205537,0.09752074847331114,0.26%
-Most Popular (Variant 2: Positive Only),0.10824915824915825,0.029877525276441764,0.11018393567928687,0.26%
-Item-KNN (Tuned k=50),0.15168350168350167,0.04519887523771918,0.16966201203418832,7.06%
+group_id,part,model_name,variant_notes,k,similarity,precision_at_10,recall_at_10,ndcg_at_10,coverage
+18,Part 1,Most Popular,All-time popularity (train),N/A,N/A,0.0925,0.0229,0.0975,0.0026
+18,Part 1,Most Popular,Positive ratings (>=4) popularity (train),N/A,N/A,0.1082,0.0299,0.1102,0.0026
+18,Part 2,BPR-MF (Self-Implemented),"Full train; d=64,lr=0.015,reg=0.01",64,BPR-DotProduct,0.151,0.0461,0.1624,0.0288
+18,Part 2,User-KNN,Full train; val-tuned k=50,50,Cosine,0.1572,0.0518,0.1734,0.1293
+18,Part 2,Content-Based Profile,Full train; genres + release year,N/A,Cosine,0.0323,0.0174,0.0375,0.1898
+18,Part 2,BPR-MF (Self-Implemented),Slice: Low-activity users,64,BPR-DotProduct,0.1881,0.053,0.2044,0.0077
+18,Part 2,BPR-MF (Self-Implemented),Slice: High-activity users,64,BPR-DotProduct,0.1767,0.0563,0.1889,0.0288
+18,Part 2,BPR-MF (Self-Implemented),Slice: Popular items,64,BPR-DotProduct,0.1526,0.0501,0.1644,0.0288
+18,Part 2,BPR-MF (Self-Implemented),Slice: Long-tail items,64,BPR-DotProduct,0.0,0.0,0.0,0.0281
+18,Part 2,BPR-MF (Self-Implemented),Sparsity 50% train,64,BPR-DotProduct,0.0933,0.0275,0.0976,0.0075
+18,Part 2,User-KNN,Sparsity 50% train,50,Cosine,0.0723,0.0251,0.0761,0.0999
+18,Part 2,BPR-MF (Self-Implemented),Sparsity 20% train,64,BPR-DotProduct,0.0822,0.0238,0.0828,0.0054
+18,Part 2,User-KNN,Sparsity 20% train,50,Cosine,0.059,0.017,0.0602,0.1326
